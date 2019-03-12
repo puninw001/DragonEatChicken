@@ -11,13 +11,13 @@ const gameover = () => {
   background(0);
   fill('white');
   textAlign(CENTER);
-  vel = 6;
-  score = 0;
   text(`Your Score: ${score}`, width / 2, height / 1.6);
   text('GAME OVER',width / 2, height / 2);
   text('press space to restart',width / 2, height / 1.8);
   isGameover = true;
   if(keyCode === 32) {
+    vel = 6;
+    score = 0;
     isGameover = false;
   }
   for(let i = 0; i < 10; i++) {

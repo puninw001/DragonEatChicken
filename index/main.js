@@ -1,5 +1,4 @@
 var enemy_num = 7;
-var check = 0;
 var end = false;
 var mainState = {
   preload: function () {
@@ -119,6 +118,11 @@ var mainState = {
       this.spawnEnemy();
     }
 
+    if (end == true && this.cursors.down.isDown){
+      this.state.start('main');
+      end = false;
+    }
+
 
   },
   
@@ -137,7 +141,7 @@ var mainState = {
 
   collectChick: function(player, chick) {
     chick.destroy();
-    this.score += 10;
+    this.score += 1;
     this.scoreText.text = 'Score : ' + this.score;
     this.spawnChick();
   },

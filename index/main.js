@@ -2,30 +2,41 @@ var enemy_num = 7;
 var end = false;
 var mainState = {
   preload: function () {
+    // game.load.audio('name', 'path/to/filename');
+    game.load.audio('dead', 'sound_effect/dead.wav');
+    game.load.audio('getpoint', 'sound_effect/chick.wav');
+    game.load.audio('jump', 'sound_effect/jump.wav');
     // game.load.image('name', 'path/to/filename');
     game.load.image('ground1', 'assets/ground1.png');
     game.load.image('chick', 'assets/chick_stick.png');
     game.load.image('enemies', 'assets/rocket_1.png');
     game.load.image('ground2', 'assets/ground2.png');
     game.load.image('groundAir', 'assets/ground_air.png');
+    game.load.image('background', 'assets/background.png');
 
     // game.load.spritesheet('name', 'path/to/filename', width, height)  optional : frame count.
     game.load.spritesheet('player', 'assets/pokemon_1.png', 64, 64);
   },
 
   create: function () {
+    game.add.tileSprite(0, 0, 800, 600, 'background');
 
     this.score = 0;
     this.scoreText;
     this.endText;
 
-        // text(x, y, text, style);
+    // add sound effect
+    jump = game.add.audio('jump');
+    point = game.add.audio('getpoint');
+    die = game.add.audio('dead');
+
+    // text(x, y, text, style);
     this.scoreText = game.add.text(16, 16, 'Score : ' + this.score, {
       fontSize: '20px',
       fill: '#ed3465'
     });
 
-    game.stage.backgroundColor = '#a8e8ff';
+
 
     game.physics.startSystem(Phaser.Physics.ARCADE);
     // Add ground out of the world for respawn the rocket
@@ -110,8 +121,9 @@ var mainState = {
     }
 
     // // Allow player to jump if player touching the ground.
-    if (this.cursors.up.isDown && this.player.body.touching.down) {
+    if (this.cursors.up.isDown && this.player.body.touching.down && end == false) {
       this.player.body.velocity.y = -500;
+      jump.play();
     }
 
     if (enemy_num < 7){
@@ -122,7 +134,6 @@ var mainState = {
       this.state.start('main');
       end = false;
     }
-
 
   },
   
@@ -140,6 +151,7 @@ var mainState = {
   },
 
   collectChick: function(player, chick) {
+    point.play();
     chick.destroy();
     this.score += 1;
     this.scoreText.text = 'Score : ' + this.score;
@@ -180,6 +192,7 @@ var mainState = {
   },
 
   end: function(player, coin) {
+    die.play();
     player.destroy();
     end = true;
     this.endText = game.add.text(300, 250, 'You are dead', {

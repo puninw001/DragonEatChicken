@@ -1,4 +1,3 @@
-var enemy_num = 7;
 var end = false;
 var mainState = {
   preload: function () {
@@ -20,7 +19,8 @@ var mainState = {
 
   create: function () {
     game.add.tileSprite(0, 0, 800, 600, 'background');
-
+    this.enemy_num = 0;
+    this.enemy_max = 1;
     this.score = 0;
     this.scoreText;
     this.endText;
@@ -32,6 +32,10 @@ var mainState = {
 
     // text(x, y, text, style);
     this.scoreText = game.add.text(16, 16, 'Score : ' + this.score, {
+      fontSize: '20px',
+      fill: '#ed3465'
+    });
+    this.levelText = game.add.text(16, 48, 'Level : 1', {
       fontSize: '20px',
       fill: '#ed3465'
     });
@@ -89,7 +93,7 @@ var mainState = {
     this.enemy.enableBody = true;
     // Start random spawn coins and spawn the enemy (play function())
     this.spawnChick();
-    this.firstspawnEnemy();
+    this.spawnEnemy();
 
 
     // Set input = this.cursors
@@ -126,7 +130,7 @@ var mainState = {
       jump.play();
     }
 
-    if (enemy_num < 7){
+    if (this.enemy_num < this.enemy_max){
       this.spawnEnemy();
     }
 
@@ -156,10 +160,23 @@ var mainState = {
     this.score += 1;
     this.scoreText.text = 'Score : ' + this.score;
     this.spawnChick();
+    if (this.score == 5){
+      this.enemy_max += 1;
+      this.levelText.text = 'Level : 2';
+    }else if (this.score == 10){
+      this.enemy_max += 2;
+      this.levelText.text = 'Level : 3';
+    }else if (this.score == 15){
+      this.enemy_max += 2;
+      this.levelText.text = 'Level : 4';
+    }else if (this.score == 20){
+      this.enemy_max += 2;
+      this.levelText.text = 'Level : MAX';
+    }
   },
 
   spawnEnemy: function() {
-    enemy_num += 1;
+    this.enemy_num += 1;
     var x = this.rnd.integerInRange(0, game.world.width - 40);
     var y = this.rnd.integerInRange(0, game.world.height - 800);
 
@@ -174,28 +191,18 @@ var mainState = {
 
   enemyHit: function(ground, enemy) {
     enemy.destroy();
-    enemy_num -= 1;
-  },
-  
-  firstspawnEnemy: function() {
-    for (i=0; i<7; i++){
-      var x = this.rnd.integerInRange(0, game.world.width - 40);
-      var y = this.rnd.integerInRange(0, game.world.height - 800);
-
-      this.enemy.create(x, y, 'enemies');
-      this.enemy.forEach(function(enemies) {
-        game.physics.arcade.enable(enemies);
-        enemies.scale.setTo(0.5, 0.5);
-        enemies.body.gravity.y = 400;
-      });
-    }    
+    this.enemy_num -= 1;
   },
 
   end: function(player, coin) {
     die.play();
     player.destroy();
     end = true;
-    this.endText = game.add.text(300, 250, 'You are dead', {
+    this.endText = game.add.text(300, 220, 'You are dead', {
+      fontSize: '20px',
+      fill: '#FF0000'
+    });
+    this.endText = game.add.text(220, 270, 'Press down_arrow to restart', {
       fontSize: '20px',
       fill: '#FF0000'
     });
